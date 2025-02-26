@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Add executable
-add_executable(path_finder_executable path_finder.cpp)
+add_executable(path_finder_executable src/path_finder.cpp)
 
 # Include directories (if needed)
 include_directories(${CMAKE_SOURCE_DIR}/include)

@@ -1,3 +1,0 @@
-/media/storage/lost+found/projects/cpp/path_finding/build/CMakeFiles/path_finder_executable.dir
-/media/storage/lost+found/projects/cpp/path_finding/build/CMakeFiles/edit_cache.dir
-/media/storage/lost+found/projects/cpp/path_finding/build/CMakeFiles/rebuild_cache.dir

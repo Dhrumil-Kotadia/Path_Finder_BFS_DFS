@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <iostream>
 #include <algorithm>
+#include <chrono>
+#include <cmath>
 
 class Node
 {
@@ -119,26 +121,19 @@ public:
     * @param alg: algorithm to find path (1. BFS, 2. DFS)
     * @return Path data structure containing flag and path
     */
-    Path does_path_exist(int source, int destination, int alg = 1)
-    {
-        Path path_data;
-        if (source == destination)
-        {
-            path_data.flag = true;
-            path_data.path = {source};
-            return path_data;
-        }
-
-        if (alg == 1)
-        {
-            path_data = bfs(source, destination);
-        }
-        else if (alg == 2)
-        {
-            path_data = dfs(source, destination);
-        }
-        return path_data;
-    }
+   Path does_path_exist(int source, int destination, int alg=1)
+   {
+       auto start_time = std::chrono::high_resolution_clock::now();
+       Path path_data;
+       if (alg == 1) path_data = bfs(source, destination);
+       else if (alg == 2) path_data = dfs(source, destination);
+       else if (alg == 3) path_data = dijkstra(source, destination);
+       else if (alg == 4) path_data = astar(source, destination);
+       auto end_time = std::chrono::high_resolution_clock::now();
+       std::chrono::duration<double> duration = end_time - start_time;
+       std::cout << "Algorithm took: " << duration.count() << " seconds\n";
+       return path_data;
+   }
 
 private:
     /*
@@ -199,6 +194,85 @@ private:
             path_data.flag = true;
             path_data.path = path;
         }
+        return path_data;
+    }
+
+    /*
+    * @brief Find path between source and destination using Dijkstra's algorithm
+    * @param source: source node
+    * @param destination: destination node
+    * @return Path data structure containing flag and path
+    */
+    Path dijkstra(int source, int destination)
+    {
+        Path path_data;
+        std::unordered_map<int, double> dist;
+        std::unordered_map<int, int> parent;
+        auto cmp = [&](int left, int right) { return dist[left] > dist[right]; };
+        std::priority_queue<int, std::vector<int>, decltype(cmp)> pq(cmp);
+        
+        for (auto &[key, _] : nodes) dist[key] = INFINITY;
+        dist[source] = 0;
+        pq.push(source);
+
+        while (!pq.empty())
+        {
+            int current = pq.top(); pq.pop();
+            if (current == destination) break;
+            for (int neighbor : nodes[current].neighbors)
+            {
+                double new_dist = dist[current] + 1;
+                if (new_dist < dist[neighbor])
+                {
+                    dist[neighbor] = new_dist;
+                    parent[neighbor] = current;
+                    pq.push(neighbor);
+                }
+            }
+        }
+        reconstruct_path(source, destination, parent, path_data.path);
+        path_data.flag = !path_data.path.empty();
+        return path_data;
+    }
+
+    /*
+    * @brief Find path between source and destination using A* algorithm
+    * @param source: source node
+    * @param destination: destination node
+    * @return Path data structure containing flag and path
+    */
+    Path astar(int source, int destination)
+    {
+        Path path_data;
+        std::unordered_map<int, double> g_score, f_score;
+        std::unordered_map<int, int> parent;
+        auto heuristic = [&](int node) { return 0; }; // Placeholder heuristic
+        auto cmp = [&](int left, int right) { return f_score[left] > f_score[right]; };
+        std::priority_queue<int, std::vector<int>, decltype(cmp)> pq(cmp);
+        
+        for (auto &[key, _] : nodes) g_score[key] = f_score[key] = INFINITY;
+        g_score[source] = 0;
+        f_score[source] = heuristic(source);
+        pq.push(source);
+
+        while (!pq.empty())
+        {
+            int current = pq.top(); pq.pop();
+            if (current == destination) break;
+            for (int neighbor : nodes[current].neighbors)
+            {
+                double tentative_g = g_score[current] + 1;
+                if (tentative_g < g_score[neighbor])
+                {
+                    g_score[neighbor] = tentative_g;
+                    f_score[neighbor] = tentative_g + heuristic(neighbor);
+                    parent[neighbor] = current;
+                    pq.push(neighbor);
+                }
+            }
+        }
+        reconstruct_path(source, destination, parent, path_data.path);
+        path_data.flag = !path_data.path.empty();
         return path_data;
     }
 

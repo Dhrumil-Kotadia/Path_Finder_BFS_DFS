@@ -57,7 +57,7 @@ std::vector<int> get_data_from_cmd(logger log)
     std::cin >> test_case;
     data.push_back(test_case);
 
-    log.info("Please select method (1. BFS, 2. DFS): ", false);
+    log.info("Please select method (1. BFS, 2. DFS, 3. Dijkstra 4. A-star): ", false);
     std::cin >> method;
     data.push_back(method);
 
@@ -79,7 +79,7 @@ int main() {
         log.error("Invalid test case");
         return 0;
     }
-    if (method < 1 || method > 2) {
+    if (method < 1 || method > 4) {
         log.error("Invalid method");
         return 0;
     }
@@ -90,7 +90,7 @@ int main() {
         {
             // Test case 1: Simple path exists
             std::vector<std::vector<int>> edges1 = {{0, 1}, {1, 2}, {2, 3}};
-            log.info("Test Case 1:", false);
+            log.info("Test Case 1:");
             solution.validPath(4, edges1, 0, 3, method);  // Expected: Path exists: 0 1 2 3
         }
         break;
@@ -99,7 +99,7 @@ int main() {
         {
             // Test case 2: No path exists
             std::vector<std::vector<int>> edges2 = {{0, 1}, {2, 3}};
-            log.info("Test Case 2:", false);
+            log.info("Test Case 2:");
             solution.validPath(4, edges2, 0, 3, method);  // Expected: No path exists
         }
         break;
@@ -108,7 +108,7 @@ int main() {
         {
             // Test case 3: Direct edge between source and destination
             std::vector<std::vector<int>> edges3 = {{0, 1}};
-            log.info("Test Case 3:", false);
+            log.info("Test Case 3:");
             solution.validPath(2, edges3, 0, 1, method);  // Expected: Path exists: 0 1
         }
         break;
@@ -118,7 +118,7 @@ int main() {
         {
             // Test case 4: Graph with multiple paths (multiple parents for nodes)
             std::vector<std::vector<int>> edges4 = {{0, 1}, {0, 2}, {1, 3}, {2, 3}};
-            log.info("Test Case 4:", false);
+            log.info("Test Case 4:");
             solution.validPath(4, edges4, 0, 3, method);  // Expected: Path exists: 0 1 3 or 0 2 3
         }
         break;
@@ -127,7 +127,7 @@ int main() {
         {
             // Test case 5: Path with backtracking
             std::vector<std::vector<int>> edges5 = {{0, 1}, {1, 2}, {2, 3}, {3, 4}};
-            log.info("Test Case 5:", false);
+            log.info("Test Case 5:");
             solution.validPath(5, edges5, 0, 4, method);  // Expected: Path exists: 0 1 2 3 4
         }
         break;
